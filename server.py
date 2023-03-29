@@ -1,7 +1,9 @@
+import io
 import os
 from pathlib import Path
 
-from flask import Flask, request
+import requests
+from flask import Flask, request, send_file
 
 app = Flask(__name__)
 
@@ -71,6 +73,64 @@ def data_passing():
         "args": args,
         "file": file,
     }
+
+
+def _pow(power):
+    num = request.json["num"]
+    return {"num": num, "result": num**power}
+
+
+@app.route("/sq")
+def sq():
+    return _pow(2)
+
+
+@app.route("/cube")
+def cube():
+    return _pow(3)
+
+
+@app.route("/get_bill_amount")
+def get_bill_amount():
+    data = request.json
+
+    # method 1
+    # total_amount = 0
+    # for item in data:
+    #     total_amount += item["rate"] * item["qty"]
+
+    # method 2
+    total_amount = sum([item["rate"] * item["qty"] for item in data])
+
+    return {"data": data, "amount": total_amount}
+
+
+@app.route("/set_colors")
+def set_colors():
+    colors = request.form.getlist("colors[]")
+    return colors
+
+
+@app.route("/tts")
+def get_tts_result():
+    data = requests.get(
+        "https://unsplash.com/photos/0boeA7NBluU/download?ixid=MnwxMjA3fDF8MXxhbGx8MXx8fHx8fDJ8fDE2ODAxMDU2NTM&force=true"
+    )
+    return send_file(
+        io.BytesIO(data.content),
+        mimetype="image/jpeg",
+        as_attachment=True,
+        download_name="result.jpg",
+    )
+
+
+@app.route("/file_binary")
+def file_binary_input():
+    file = request.stream
+    with open("uploads/temp.wav", "wb") as f:
+        f.write(file.read())
+
+    return str(os.stat("uploads/temp.wav").st_size) + "b"
 
 
 app.run(debug=True)
