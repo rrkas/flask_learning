@@ -133,4 +133,38 @@ def file_binary_input():
     return str(os.stat("uploads/temp.wav").st_size) + "b"
 
 
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    args = request.args
+
+    return {
+        "data": data,
+        "args": args,
+    }
+
+
+@app.route("/set_password", methods=["PATCH", "PUT", "POST"])
+def set_password():
+    data = request.json
+    args = request.args
+
+    return {
+        "data": data,
+        "args": args,
+    }
+
+
+"""
+GET = receive resource / data
+    HEAD = only headers and metadata about response
+    OPTIONS = available methods and things related to a endpoint
+
+POST = send resource / data
+    PUT = set resource / data
+    PATCH = modify resource / data
+    DELETE = delete resource / data
+
+"""
+
 app.run(debug=True)
