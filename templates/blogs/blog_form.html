@@ -1,0 +1,34 @@
+{% extends "layouts/root_layout.html" %} {% block content %}
+
+<div class="page page-center">
+  <div class="container container-xl py-4">
+    <form class="card card-md" action="/blogs/new/" method="post">
+      <div class="card-body">
+        <h2 class="card-title text-center mb-4 h1 strong">Create new Blog</h2>
+        <div class="mb-3">
+          <label class="form-label">Title</label>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Enter title"
+            name="title"
+          />
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Description</label>
+          <textarea
+            name="desc"
+            class="form-control"
+            placeholder="What's on your mind"
+            rows="10"
+          ></textarea>
+        </div>
+        <div class="form-footer text-center">
+          <button type="submit" class="btn btn-primary px-5">Create</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
