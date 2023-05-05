@@ -1,0 +1,21 @@
+{% extends "layouts/root_layout.html" %} {% block content %}
+
+<div class="page h-100">
+  <div class="container container-xl py-4 h-100">
+    <a href="/blogs/" class="btn btn-primary">See all blogs</a>
+    {% if blog %}
+        <h1 class="text-center">{{ blog.title }}</h1>
+        <p class="text-center strong "> - {{ user.name }}</p>
+        <p class="text-end" style="font-size: 16pt;">{{ blog.datetime }} IST</p>
+        <div class="card card-body h-100">
+            {{ blog.desc }}
+        </div>
+    {% else %}
+        <div class="text-danger h1">
+            Blog Not found!
+        </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

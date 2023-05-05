@@ -58,4 +58,23 @@ def create_blog():
     return render_template("blogs/blog_form.html")
 
 
+@app.route("/blog/<pk>/", methods=["GET"])
+def view_blog(pk):
+    data = json.load(open("./demo/blogs.json"))
+    blog = None
+    for e in data:
+        if e["id"] == pk:
+            blog = e
+            break
+    
+    user = None
+    if blog:
+        blog = Blog(**blog)
+        users = json.load(open("./demo/users.json"))
+        for e in users:
+            if e["uid"] == blog.uid:
+                user = e
+    
+    return render_template("blogs/blog_view.html", blog=blog, user=user)
+
 app.run(debug=True)
