@@ -1,19 +1,22 @@
-import json
 import datetime
+import json
+
 from flask import Flask, redirect, render_template, request
 
-from models.blog import Blog
+from common import app
+from sql import get_blogs, get_users, get_blog_by_id, validate_user, create_blog
 
-app = Flask(__name__)
+uid = None
 
 
 @app.route("/", methods=["POST", "GET"])
 def login():
+    global uid
     if request.method == "POST":
         data = request.form
         email = data.get("email")
         password = data.get("password")
-        success = email == "admin@admin.com" and password == "admin"
+        success, uid = validate_user(email, password)
         if success:
             return redirect("/blogs/")
 
@@ -29,30 +32,18 @@ def login():
 
 @app.route("/blogs/", methods=["GET"])
 def blogs_home():
-    with open("./demo/blogs.json") as f:
-        data = json.load(f)
-
-    data = [Blog(**e) for e in data]
-    print(data)
+    data = get_blogs()
+    # print(data)
     return render_template("blogs/blogs_home.html", data=data)
 
 
 @app.route("/blogs/new/", methods=["GET", "POST"])
-def create_blog():
+def new_blog():
     if request.method == "POST":
         data = request.form
         title = data.get("title")
         desc = data.get("desc")
-        blog = Blog(title, desc, datetime.datetime.now(), "demo_user")
-
-        with open("./demo/blogs.json") as f:
-            data: list = json.load(f)
-
-        data.append(blog.to_dict())
-
-        with open("./demo/blogs.json", "w") as f:
-            json.dump(data, f, indent=4, default=str)
-
+        create_blog(title, desc, uid)
         return redirect("/blogs/")
 
     return render_template("blogs/blog_form.html")
@@ -60,21 +51,9 @@ def create_blog():
 
 @app.route("/blog/<pk>/", methods=["GET"])
 def view_blog(pk):
-    data = json.load(open("./demo/blogs.json"))
-    blog = None
-    for e in data:
-        if e["id"] == pk:
-            blog = e
-            break
-    
-    user = None
-    if blog:
-        blog = Blog(**blog)
-        users = json.load(open("./demo/users.json"))
-        for e in users:
-            if e["uid"] == blog.uid:
-                user = e
-    
+    blog = get_blog_by_id(pk)
+    user = blog.user
     return render_template("blogs/blog_view.html", blog=blog, user=user)
+
 
 app.run(debug=True)
