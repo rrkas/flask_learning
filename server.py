@@ -4,7 +4,7 @@ import json
 from flask import Flask, redirect, render_template, request
 
 from common import app
-from sql import get_blogs, get_users, get_blog_by_id, validate_user, create_blog
+from sql_raw import get_blogs, get_users, get_blog_by_id, validate_user, create_blog
 
 uid = None
 

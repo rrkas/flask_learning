@@ -1,3 +1,5 @@
 black
-flask
+faker
+flask-sqlalchemy
 pip-chill
+tqdm
